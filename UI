@@ -1,0 +1,22 @@
+public class MainData
+{
+    public static float m_BaseLife = 100; //성벽의 Hp
+    public static int   m_Stage = 1;      //현재 스테이지
+    public static int   m_Coin = 0;       //내 소지금
+}
+
+
+public Slider BaseLife;    //성의 체력
+public Text val_stage; //현재 스테이지
+public Text val_coin;  //현재 소지금
+
+
+void Show_UI()
+    {
+        BaseLife.value  = MainData.m_BaseLife;
+        val_coin.text   = MainData.m_Coin.ToString();
+        val_stage.text  = MainData.m_Stage.ToString();
+    }
+    
+    //UI를 사용할때는 변수설정을 해놓고  그 유아를 다른 속성에 연결시키면 됨
+    //물론 unity내의 스크립트가 연결된 객체에 변수들을 하나하나 지정해줘야함
