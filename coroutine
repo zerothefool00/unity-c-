@@ -1,0 +1,43 @@
+
+
+public class PlayerControl : MonoBehaviour
+{
+    public bool islaser = false; //레이저 발사 상태//(1)
+    bool isfired = true;//코루틴때 사용할 변수(2)
+    //버튼 이벤트에 맞추어 값을 변경 
+    public void laser_On()  {islaser = true;    }
+    public void Laser_Off() {islaser = false;   }
+    public Transform laserprefab; //레이저 프리팹
+    void Fire_Laser()
+    {
+        //버튼이 눌려있는 상황이면서 발사중이라면 ,   0.1초 인터발로
+        if(islaser == true && isfired ==true){
+            StartCoroutine(laserfire());//총알을 만든다 
+    }
+        
+        IEnumerator laserfire(){
+        isfired = false;//프레임마다 발사를 막기위해
+        Instantiate(laserprefab, laser_fire.position, laser_fire.rotation);//프리팹을 생성하는 방법
+        yield return new WaitForSeconds(0.07f);//0.07초 인터발을 가진후
+        isfired = true; //해당 시간후에 발사가능하게만 풀어줌 
+        }
+ }
+ 
+ ///////////////////////////////////////////////
+ 
+            case Game_Sinario.firstenemy:
+                if(is_astro ==true)
+                StartCoroutine(AstroMake());
+                break;
+        }
+    }
+
+    IEnumerator AstroMake()
+    {
+        Instantiate(Astro, Fire_point.position, Fire_point.rotation);
+        is_astro = false;
+        yield return new WaitForSeconds(1.5f);
+        is_astro = true;
+
+    }
+ 
