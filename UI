@@ -1,3 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+
 public class MainData
 {
     public static float m_BaseLife = 100; //성벽의 Hp
