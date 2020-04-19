@@ -1,0 +1,6 @@
+using unityengine;
+
+this.transform.translate(Vector3.forward * 5f * Time.deltaime);
+this.gameobject.translate(Vector3.up * 5f * Time.deltaime);
+//translate 뒤에는 벡터방향* 속도 * 시간값 (좌표값이 들어가도 된다)
+
