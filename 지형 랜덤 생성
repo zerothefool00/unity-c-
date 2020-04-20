@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Block_Control : MonoBehaviour
+{
+    float Speed = 7;
+    public Transform []Block_pb; //블럭 프리팹
+    public Transform BlockA;
+    public Transform BlockB;
+    void Start()
+    {
+        BlockA = Instantiate(Block_pb[0],
+                             new Vector3(0, -5, 0), this.transform.rotation);
+        BlockB = Instantiate(Block_pb[0],
+                            new Vector3(30, -5, 0), this.transform.rotation);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        BlockA.transform.Translate(Vector3.left * Speed * Time.deltaTime);
+        BlockB.transform.Translate(Vector3.left * Speed * Time.deltaTime);
+        if (BlockB.transform.position.x <= 0)
+        {
+            Destroy(BlockA.gameObject);
+            BlockA = BlockB;//저장공간의 제어권을 Bloack A에다 준다
+            BlockMake();
+        }
+    }
+    void BlockMake()
+    {
+        int index = Random.Range(0, Block_pb.Length);
+        BlockB = Instantiate(Block_pb[index],
+                            new Vector3(BlockA.transform.position.x+30, -5, 0),
+                            this.transform.rotation);
+    }
+}
