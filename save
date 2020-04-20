@@ -1,0 +1,20 @@
+void GameOver()//게임이 끝났을때 저장
+    {   //세이브... 저장공간 만들고 , 초기화,
+        //파일정보 세팅(경로, 모드) -> 경로 정보를 미리 지정
+        //바이너리형 자료형만들고 , 직렬화 (파일정보, 저장공간 필요)
+        SaveData savdat = new SaveData(); //생성과 초기화
+        //모바일 환경에서 경로는... 내 어플폴내에서만 접근이 가능하다
+        //샌드박스(내앱위주만 건드리고 남의 어플 폴더는 접근금지
+        savdat.m_totalcoin += GameData.m_Gold;
+        savdat.m_totalmeter += GameData.m_Meter;
+
+        string path = Application.persistentDataPath+"/save.dat";
+        print("path=" + path);
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream fs = File.Open(path, FileMode.Create);
+        bf.Serialize(fs, savdat);
+        fs.Close();
+        
+        pstate = PlayerState.Death;
+        GameData.gameState = GameState.End;
+    }
