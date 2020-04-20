@@ -18,3 +18,26 @@ void GameOver()//게임이 끝났을때 저장
         pstate = PlayerState.Death;
         GameData.gameState = GameState.End;
     }
+    
+    
+    private void Awake()
+    {
+        txt_tgold.text = "" + temp_gold;
+        txt_tmeter.text = "" + temp_meter;
+        //파일로드하는데 파일이 없으면 바로 빠져나감
+        
+
+        string path = Application.persistentDataPath + "/save.dat";
+        if (File.Exists(path) == false)//파일의 존재여부를 파악하고 
+            return;                     //파일이 존재하지 않으면 탈출
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream fs = File.Open(path, FileMode.Open);
+        SaveData savedat = (SaveData)bf.Deserialize(fs);
+        temp_gold = savedat.m_totalcoin;
+        temp_meter = savedat.m_totalmeter;
+        fs.Close();
+        //변경된값으로 다시 세팅
+        txt_tgold.text = "" + temp_gold;
+        txt_tmeter.text = "" + temp_meter;
+    }
