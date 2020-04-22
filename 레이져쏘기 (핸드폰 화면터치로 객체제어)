@@ -1,0 +1,40 @@
+using UnityEngine.UI;
+public class testscript : MonoBehaviour
+{
+    public Text lclick;
+    public Text rclick;
+    public Text m_xpos;
+    public Text m_ypos;
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetMouseButton(0) == true) //0번 버튼이 눌렸다(왼버튼
+        {
+            lclick.text = "0번버튼 클릭";
+            m_xpos.text = "" +Input.mousePosition.x;
+            m_ypos.text = "" + Input.mousePosition.y;
+
+            //Camera.main.ScreenPointToRay(Input.mousePosition);
+            // Camera.main //메인카메라를 얻어온다
+            //2D(화면) ->3D 좌표로(각경우에 맞는)
+            // print(Camera.main.ScreenToWorldPoint(Input.mousePosition));//월드좌표로
+            // print(Camera.main.ScreenToViewportPoint(Input.mousePosition));//viewport
+            //광선추적후 맞았는가를 판별하는 자료형.
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;//광선추적후.. 맞았는지에 대한 세부정보를 받을 구조체 
+                           //ref 포인터. 참조....out 참조형 변수.
+                           // 단. 내부적으로 값이 세팅이 되어야만정상작동
+
+           if( Physics.Raycast(ray, out hit) ==true)
+            {
+                print(hit.transform.tag);
+            }
+        }
+        if (Input.GetMouseButton(1) == true) //1번 버튼이 눌렸다(오른버튼
+        {
+            rclick.text = "1번버튼 클릭";
+        }
+
+    }
+}
