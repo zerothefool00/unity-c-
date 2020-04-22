@@ -1,0 +1,100 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+enum TurretState { Wait, Fire }
+public class TurretControl : MonoBehaviour
+{
+    public Transform Turret;
+    public Transform Player;
+    public Transform FirePoint;
+    public Transform missile;
+    //float elaposedtime = 0f;
+    //public float smooth = 2.0F;
+    //public float tiltAngle = 30.0F;
+    //public float Astro_hp;         //소행성이 파괴 가능하다면 체력
+    //public Transform Turret_range; //소행성의 플레이어 감지범위
+    bool isfired = false;          //1초간격으로 나오게 터레싱 미사일 쏘게 하기 위한 변수
+    bool isinrange = false;  //터렛범위내인지 감지하는 함수
+    TurretState tstate = TurretState.Wait;
+    // Start is called before the first frame update
+    void Start()
+    {
+        tstate = TurretState.Wait;
+        isfired = false;
+    }
+    void Update()
+    {
+        Turretrule();
+        //float tiltAroundZ = Input.GetAxis("Horizontal") * tiltAngle;
+        //float tiltAroundX = Input.GetAxis("Vertical") * tiltAngle;
+        //Quaternion target = Quaternion.Euler(tiltAroundX, 0, tiltAroundZ);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth)
+    }
+    void Turretrule()
+    {
+        switch (tstate)
+        {
+            case TurretState.Wait:
+                if (isinrange == true)
+                {
+                    tstate = TurretState.Fire;
+                }
+                isfired = true;
+                break;
+            case TurretState.Fire:
+                {
+                    transform.LookAt(this.Player.transform.position);
+                    if (isinrange == true && isfired == true)
+                        StartCoroutine(Turretfire());
+                    if (isinrange == false)
+                        tstate = TurretState.Wait;
+                }
+                break;
+        }
+    }
+
+    //void turretwait()
+    //{  if (isinrange == false)
+    //        tstate = TurretState.Wait;
+    //       }
+    //void turretfire()
+    //{
+    //    if (isinrange == true)
+    //    {
+    //        transform.LookAt(this.Player.transform.position);
+    //        isfired = true;
+    //    }
+    //        if(isfired == true)
+    //    { 
+    //    StartCoroutine(Turretfire());
+    //    tstate = TurretState.Fire;
+    //    }
+    IEnumerator Turretfire()
+    {
+        Instantiate(missile, FirePoint.position, FirePoint.rotation);
+        isfired = false;//프레임마다 발사를 막기위해
+        yield return new WaitForSeconds(1.5f);//1.5초 인터발
+        isfired = true; //해당 시간후에 발사가능하게만 풀어줌 
+        missile.GetComponent<Rigidbody>().AddForce(Vector3.forward * 300f);
+
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.transform.name == "Player")
+        {
+            print("범위들어옴");
+            isinrange = true;
+        }
+
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.transform.name == "Player")
+        {
+            print("범위나감");
+            isinrange = false;
+        }
+
+    }
+}
