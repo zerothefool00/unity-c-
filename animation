@@ -1,0 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public enum PlayerState { Run,Jump,D_Jump,Death}//주인공의 상태..
+public class PlayerControl : MonoBehaviour
+{
+    public Animator myani;//애니메이터 컨트롤러를 받는 변수
+    float power = 800f; //점프시 주는 힘
+    PlayerState pstate = PlayerState.Run;//
+    void Start(){
+       pstate = PlayerState.Run;//
+    }
+    void Jump() {
+        myani.SetTrigger("Jump"); //애니메이터 트리거로 작동
+        myani.SetBool("OnGround", false); //땅으로 작동
+        pstate = PlayerState.Jump;
+        this.GetComponent<Rigidbody>().AddForce(Vector3.up * power);
+    }
+    void D_Jump(){
+        myani.SetTrigger("D_Jump");
+        myani.SetBool("OnGround", false);
+        pstate = PlayerState.D_Jump;
+        this.GetComponent<Rigidbody>().AddForce(Vector3.up * power);
+    }
+    void Run()
+    {
+        myani.SetBool("OnGround", true); //불형으로 에니메이터 작동
+        pstate = PlayerState.Run;
+    }
+    void Update(){
+        print(pstate);
+        if(Input.GetMouseButtonDown(0)==true){
+            if (pstate == PlayerState.Jump) D_Jump();
+            if (pstate == PlayerState.Run) Jump();
+        }
+    }
+    private void OnCollisionEnter(Collision collision){
+        if(pstate != PlayerState.Run) //점프 혹은 더블점프
+        {
+            Run();
+        }
+    }
+
+}
