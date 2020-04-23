@@ -1,0 +1,92 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public enum EnemyState {None,Work,End,Damage }
+
+public class EnemyControl : MonoBehaviour
+{
+    public float m_movrate  = 3;     //이동치
+    public float m_life     = 2;        //생명
+    public float m_damage   = 0.6f;  //공격력
+    float elapsedtime       = 0;
+    bool attack_mode        = true;
+    EnemyState mystate      = EnemyState.None;
+    // Start is called before the first frame update
+    void Start()
+    {
+        m_movrate   = 3     + MainData.m_Stage*0.1f;                                    //이동치
+        m_life      = 1     + MainData.m_Stage*0.7f;        //생명
+        m_damage    = 0.4f  + MainData.m_Stage *0.3f;       //공격력
+        elapsedtime = 0;
+        attack_mode = true;                                 //부딪치면 공격한번
+        mystate = EnemyState.Work;      
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (MainData.ispause == false)
+        {
+            EnemyLogic();//적군의 이동과 공격
+        }
+    }
+
+    public void Drained() //적군이 공격을 받아서 피깎이는것..
+    {
+        m_life -= MainData.m_AttPow;
+        if (m_life <= 0)
+        {
+            MainData.m_Coin += 50 + 50 * MainData.m_Stage;
+            MainData.EnemyCount--;
+            Destroy(this.gameObject);
+        }
+    }
+    void EnemyLogic()
+    {
+        switch (mystate)
+        {
+            case EnemyState.Work:
+                float moved = m_movrate * Time.deltaTime;
+                this.transform.Translate(Vector3.forward * moved, Space.Self);
+                break;
+            case EnemyState.End://대기상태
+                elapsedtime += Time.deltaTime;
+                if(elapsedtime >=0.5f){
+                    elapsedtime = 0;
+                    mystate = EnemyState.Damage;
+                }
+                break;
+            case EnemyState.Damage://공격상태
+                //공격함수가 위치할곳
+                //코루틴을써보자
+                if (attack_mode == true)
+                    StartCoroutine(Damaged());//("Damaged"); 함수의 형태로. 혹은 이름으로
+                                              //접근이 가능하다.
+                elapsedtime += Time.deltaTime;
+                if (elapsedtime >= 1.2f){ //공격이 끝날시간
+                    elapsedtime = 0;
+                    mystate = EnemyState.End;
+                }
+                break;
+        }
+    }
+
+    IEnumerator Damaged()
+    {
+        attack_mode = false;
+        MainData.m_BaseLife -= m_damage;//--
+        yield return new WaitForSeconds(0.3f);
+        attack_mode = true;
+    }
+
+
+    /// 성벽에 부딪치면. 이동을 멈춘다.
+    private void OnTriggerEnter(Collider other)
+    { //적군 기준으로 부딪친 상대방이 성벽이면
+
+        if (other.gameObject.tag == "mybase")
+        {         
+            mystate = EnemyState.End;
+        }
+    }
+}
